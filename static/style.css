@@ -1,0 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap');
+
+:root {
+  --neon-blue: #00ffff;
+  --neon-pink: #ff00ff;
+  --neon-yellow: #ffcc00;
+}
+
+body {
+  background-color: #0d0d0d;
+  color: #e0e0e0;
+  font-family: 'Montserrat', sans-serif;
+  padding: 12px;
+}
+
+/* ... you can paste the rest of the CSS from the template if you want ... */
