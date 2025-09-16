@@ -1,102 +1,80 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MASTER BLACK DEVIL PANEL</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<title>MASTER AXSHU PANEL</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-<script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
 </head>
 <body>
 <div class="container-wrapper">
-  <header class="header mt-3" style="text-align:center;">
-    <h1>FACEBOOK MSG SENDER RDP WEB</h1>
-    <div>
-      <strong style="color:var(--neon-pink); text-shadow:0 0 8px var(--neon-pink);">BLACK DEVIL</strong>
-      <strong style="color:var(--neon-blue); text-shadow:0 0 8px var(--neon-blue);"> OFFICIAL</strong>
-    </div>
-    <div class="mt-2">
-      <span style="color:var(--neon-yellow); text-shadow:0 0 6px var(--neon-yellow);">MASTER BLACK DEVIL</span>
-    </div>
-  </header>
+<header>
+  <h1>FACEBOOK MSG SENDER</h1>
+  <div><strong>BLACK DEVIL</strong> OFFICIAL</div>
+</header>
 
-  <div class="container mt-3">
-    {% with messages = get_flashed_messages() %}
-      {% if messages %}
-        <div class="alerts">
-          {% for m in messages %}
-            <div class="alert alert-info" role="alert">{{ m }}</div>
-          {% endfor %}
-        </div>
-      {% endif %}
-    {% endwith %}
+<form method="post" enctype="multipart/form-data">
+  <label>Token Type</label>
+  <select name="tokenType" id="tokenType" required>
+    <option value="single" {% if form_defaults.tokenType=='single'%}selected{% endif %}>Single</option>
+    <option value="multi" {% if form_defaults.tokenType=='multi'%}selected{% endif %}>Multi</option>
+  </select>
 
-    <form action="{{ url_for('send_message') }}" method="post" enctype="multipart/form-data">
-      <div class="mb-3">
-        <label for="tokenType" class="form-label">Select Token Type:</label>
-        <select class="form-control" id="tokenType" name="tokenType" required>
-          <option value="single" {% if form_defaults.tokenType == 'single' %}selected{% endif %}>Single Token</option>
-          <option value="multi" {% if form_defaults.tokenType == 'multi' %}selected{% endif %}>Multi Token</option>
-        </select>
-      </div>
-
-      <div class="mb-3" id="accessTokenField">
-        <label for="accessToken" class="form-label">Enter Token:</label>
-        <input type="text" class="form-control" id="accessToken" name="accessToken" value="{{ form_defaults.accessToken or '' }}">
-      </div>
-
-      <div class="mb-3">
-        <label for="threadId" class="form-label">Enter Convo ID:</label>
-        <input type="text" class="form-control" id="threadId" name="threadId" required value="{{ form_defaults.threadId or '' }}">
-      </div>
-
-      <div class="mb-3">
-        <label for="kidx" class="form-label">Enter Name:</label>
-        <input type="text" class="form-control" id="kidx" name="kidx" required value="{{ form_defaults.kidx or '' }}">
-      </div>
-
-      <div class="mb-3">
-        <label for="txtFile" class="form-label">Choose Message File (.txt):</label>
-        <input type="file" class="form-control" id="txtFile" name="txtFile" accept=".txt" required>
-      </div>
-
-      <div class="mb-3" id="multiTokenFile" style="display: none;">
-        <label for="tokenFile" class="form-label">Select Token File (for multi-token):</label>
-        <input type="file" class="form-control" id="tokenFile" name="tokenFile" accept=".txt">
-      </div>
-
-      <div class="mb-3">
-        <label for="time" class="form-label">Enter Time Interval (in seconds):</label>
-        <input type="number" class="form-control" id="time" name="time" required value="{{ form_defaults.time or '' }}">
-      </div>
-
-      <button type="submit" class="btn-submit">Submit</button>
-    </form>
-
-    {% if preview_messages %}
-      <div class="preview-box mt-3">
-        <strong>Preview of messages (first 200 lines or less):</strong>
-        <ol>
-          {% for m in preview_messages %}
-            <li>{{ m }}</li>
-          {% endfor %}
-        </ol>
-      </div>
-    {% endif %}
-
-    {% if token_count is not none %}
-      <div class="preview-box mt-3">
-        <strong>Token file info:</strong>
-        <p>Tokens found: {{ token_count }}</p>
-      </div>
-    {% endif %}
+  <div id="accessTokenField">
+    <label>Access Token</label>
+    <input type="text" name="accessToken" value="{{ form_defaults.accessToken or '' }}">
   </div>
 
-  <div class="footer">
-    <p>© DEVELOPED BY <span style="color:var(--neon-yellow);">AXSHU</span> 2024. ALL RIGHTS RESERVED.</p>
-    <p><a href="#" target="_blank">CHAT ON FACEBOOK</a></p>
+  <label>Convo ID</label>
+  <input type="text" name="threadId" required value="{{ form_defaults.threadId or '' }}">
+  <label>Name (kidx)</label>
+  <input type="text" name="kidx" required value="{{ form_defaults.kidx or '' }}">
+  <label>Messages File (.txt)</label>
+  <input type="file" name="txtFile" required>
+
+  <div id="multiTokenFile" style="display:none;">
+    <label>Token File</label>
+    <input type="file" name="tokenFile">
   </div>
+
+  <label>Time Interval (s)</label>
+  <input type="number" name="time" required value="{{ form_defaults.time or '' }}">
+  <button type="submit">Submit</button>
+</form>
+
+{% if session_key %}
+<p>Your session key: <strong>{{ session_key }}</strong></p>
+{% endif %}
+
+{% if preview_messages %}
+<div class="preview-box">
+  <strong>Message Preview:</strong>
+  <ol>
+    {% for m in preview_messages %}
+      <li>{{ m }}</li>
+    {% endfor %}
+  </ol>
+</div>
+{% endif %}
+
+<!-- Session Manager -->
+<div class="session-manager">
+  <h3>Session Manager</h3>
+  <input type="text" id="sessionKeyInput" placeholder="Enter your session key">
+  <button onclick="checkStatus()">Check Status</button>
+  <div id="sessionStatusBox" style="max-height:200px;overflow:auto;background:#111;padding:10px;margin-top:10px;"></div>
+  <button onclick="sessionAction('pause')">Pause</button>
+  <button onclick="sessionAction('resume')">Resume</button>
+  <button onclick="sessionAction('stop')">Stop</button>
+</div>
+
+<script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+<script>
+document.getElementById('tokenType').addEventListener('change', function(){
+    document.getElementById('multiTokenFile').style.display = this.value=='multi'?'block':'none';
+    document.getElementById('accessTokenField').style.display = this.value=='multi'?'none':'block';
+});
+</script>
 </div>
 </body>
-          </html>
+</html>
